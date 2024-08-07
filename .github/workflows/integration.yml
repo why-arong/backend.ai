@@ -5,7 +5,6 @@ on:
     - cron: '0 0 * * 6'
   workflow_dispatch:
 
-
 jobs:
   integration:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip:ci') }}
@@ -43,11 +42,16 @@ jobs:
         cache-lmdb-store: 'true'
     - name: Test
       timeout-minutes: 15
-      shell: 'script -q -e -c "bash {0}"'
+      shell: 'script -q -e -c "bash {0}" script_output.log'
       run: |
-        exit 1
-        exit 1
-        exit 0
+        ./scripts/install-dev.sh
+        ./backend.ai test run-cli admin
+        ./backend.ai test run-cli user
+    - name: Save Script Output as Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: script-output
+        path: script_output.log
     - name: Upload pants log
       uses: actions/upload-artifact@v4
       with:
