@@ -42,9 +42,8 @@ jobs:
         cache-lmdb-store: 'true'
     - name: Test
       timeout-minutes: 15
-      shell: bash
+      shell: 'script -q -e -c "bash {0}"'
       run: |
-        set -o pipefail  # 명령어 실패 시 전체 스크립트 실패로 처리
         ./scripts/install-dev.sh | tee install-dev.log
         ./backend.ai test run-cli admin | tee run-cli-admin.log
         ./backend.ai test run-cli user | tee run-cli-user.log
