@@ -45,8 +45,8 @@ jobs:
       timeout-minutes: 15
       shell: bash
       run: |
-        ./scripts/install-dev.sh &&
-        ./backend.ai test run-cli admin &&
+        ./scripts/install-dev.sh && \
+        ./backend.ai test run-cli admin && \
         ./backend.ai test run-cli user
     - name: Upload pants log
       uses: actions/upload-artifact@v4
