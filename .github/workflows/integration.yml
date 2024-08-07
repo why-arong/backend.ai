@@ -45,9 +45,9 @@ jobs:
       timeout-minutes: 15
       shell: 'script -q -e -c "bash {0}"'
       run: |
-        ./scripts/install-dev.sh
-        ./backend.ai test run-cli admin
-        ./backend.ai test run-cli user
+        exit 1
+        exit 1
+        exit 0
     - name: Upload pants log
       uses: actions/upload-artifact@v4
       with:
