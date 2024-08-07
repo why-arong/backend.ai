@@ -5,7 +5,6 @@ on:
     - cron: '0 0 * * 6'
   workflow_dispatch:
 
-
 jobs:
   integration:
     if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip:ci') }}
@@ -43,14 +42,24 @@ jobs:
         cache-lmdb-store: 'true'
     - name: Test
       timeout-minutes: 15
-      shell: 'script -q -e -c "bash {0}"'
+      shell: bash
       run: |
-        ./scripts/install-dev.sh
-        ./backend.ai test run-cli admin
-        ./backend.ai test run-cli user
+        set -o pipefail  # 명령어 실패 시 전체 스크립트 실패로 처리
+        ./scripts/install-dev.sh | tee install-dev.log
+        ./backend.ai test run-cli admin | tee run-cli-admin.log
+        ./backend.ai test run-cli user | tee run-cli-user.log
+    - name: Upload test logs
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-logs
+        path: |
+          install-dev.log
+          run-cli-admin.log
+          run-cli-user.log
+      if: always()  # 항상 로그 파일을 업로드
     - name: Upload pants log
       uses: actions/upload-artifact@v4
       with:
         name: pants.test.log
         path: .pants.d/workdir/pants.log
-      if: always()  # We want the log even on failures.
+      if: always()  # 실패해도 로그 업로드
